@@ -12,7 +12,9 @@ services:
   db:
     image: postgres 
     ports: 
-      - 5432:5432
+      - "5432:5432"
     environment:
       POSTGRES_USER: owner
       POSTGRES_PASSWORD: password   
+    volumes:
+      - /app/tmp/db:/var/lib/postresql/data
