@@ -5,11 +5,12 @@ class StudentsController < ApplicationController
   end
 
   def create 
-    # debugger
     student = Student.new(student_params)
+    # debugger
     if student.valid?
-      student.save 
-      render json: student, status: :created 
+      student.save
+      json_student = student.as_json(except: [:created_at, :updated_at]) 
+      render json: json_student, status: 201
     end
   end
 
