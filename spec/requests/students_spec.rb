@@ -36,41 +36,58 @@ RSpec.describe "Students", type: :request do
   end
 
   describe "POST create" do 
-    let(:correct_params) do 
-      {
-        first_name: 'John',
-        last_name: 'Doe', 
-        surname: 'Michal',
-        school_id: school.id, 
-        class_id: class_1.id
-      }
-    end
-
-    subject { post '/students', params: correct_params }
-
-    it 'should return status 201' do
-      subject 
-      expect(response).to have_http_status(201)
-    end
-    
-    it 'should return attributes' do
-      subject 
-      json = JSON.parse(response.body)
-      # debugger
-      expect(json).to eq(
+    context 'when valid input' do 
+      let(:correct_params) do 
         {
-          "id" => Student.last.id, 
-          "first_name" => correct_params[:first_name],
-          "last_name" => correct_params[:last_name], 
-          "surname" => correct_params[:surname],
-          "school_id" => correct_params[:school_id],
-          "class_id" => correct_params[:class_id]
+          first_name: 'John',
+          last_name: 'Doe', 
+          surname: 'Michal',
+          school_id: school.id, 
+          class_id: class_1.id
         }
-      )
+      end
+
+      subject { post '/students', params: correct_params }
+
+      it 'should return status 201' do
+        subject 
+        expect(response).to have_http_status(201)
+      end
+      
+      it 'should return attributes' do
+        subject 
+        json = JSON.parse(response.body)
+        expect(json).to eq(
+          {
+            "id" => Student.last.id, 
+            "first_name" => correct_params[:first_name],
+            "last_name" => correct_params[:last_name], 
+            "surname" => correct_params[:surname],
+            "school_id" => correct_params[:school_id],
+            "class_id" => correct_params[:class_id]
+          }
+        )
+      end
+
+      it 'should change count of Students' do 
+        expect { subject }.to change { Student.all.count }.by(1)
+      end
     end
 
-    it 'should change count of Students' do 
-      expect { subject }.to change { Student.all.count }.by(1)
+    context 'when invalid input' do 
+      let(:invalid_params) do 
+        {
+          first_name: 'John',
+          last_name: 'Doe', 
+          surname: 'Michal'
+        }
+      end
+
+      subject { post '/students', params: invalid_params }
+      it 'should return status 405' do 
+        subject
+        expect(response).to have_http_status(405)
+      end
     end
   end
 end
