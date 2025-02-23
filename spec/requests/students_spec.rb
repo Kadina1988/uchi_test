@@ -4,12 +4,13 @@ RSpec.describe "Students", type: :request do
   describe "GET index" do
     let(:school) { create :school }
     let(:class_1) { create :school_class, school: school }
-    let!(:student) { create :student, school: school, school_class: class_1 }
-    let!(:student_2) { create :student, school: school, school_class: class_1, first_name: 'Сергей' }
+    let!(:student) { create :student, school: school, class_id: class_1.id }
+    let(:student_2) { create :student, school: school, class_id: class_1.id, first_name: 'Сергей' }
 
     subject { get "/schools/#{school.id}/classes/#{class_1.id}/students"}
 
     it 'should return status ok' do 
+      # debugger
       subject 
       expect(response).to have_http_status(:ok)
     end

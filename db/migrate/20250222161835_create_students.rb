@@ -5,7 +5,7 @@ class CreateStudents < ActiveRecord::Migration[7.2]
       t.string :last_name
       t.string :surname
       t.references :school, null: false, foreign_key: true
-      t.references :school_class, null: false, foreign_key: { to_table: :classes }
+      t.references :class, null: false, foreign_key: { to_table: :classes }
 
       t.timestamps
     end
