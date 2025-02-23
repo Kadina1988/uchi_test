@@ -5,7 +5,7 @@ class StudentsController < ApplicationController
   end
 
   def create 
-    debugger
+    # debugger
     student = Student.new(student_params)
     if student.valid?
       student.save 
