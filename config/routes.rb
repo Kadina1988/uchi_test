@@ -4,4 +4,6 @@ Rails.application.routes.draw do
       resources :students, only: %i[index]
     end
   end
+
+  resources :students, only: :create 
 end

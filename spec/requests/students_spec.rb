@@ -1,9 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe "Students", type: :request do
+  let(:school) { create :school }
+  let(:class_1) { create :school_class, school: school }
+  
   describe "GET index" do
-    let(:school) { create :school }
-    let(:class_1) { create :school_class, school: school }
     let!(:student) { create :student, school: school, school_class: class_1 }
     let!(:student_2) { create :student, school: school, school_class: class_1, first_name: 'Сергей' }
 
@@ -37,16 +38,28 @@ RSpec.describe "Students", type: :request do
         first_name: 'John',
         last_name: 'Doe', 
         surname: 'Michal',
-        school_id: 2, 
-        class_id: 3
+        school_id: school.id, 
+        class_id: class_1.id
       }
     end
 
-    subject { post '/students', params: :correct_params }
+    subject { post '/students', params: correct_params }
 
-    it 'should return status 201' do 
+    it 'should return status 201' do
       subject 
+      # debugger
       expect(response).to have_http_status(201)
+    end
+
+    it 'should return attributes' do
+      subject 
+      expect(json).to eq(
+        correct_params
+      )
+    end
+
+    it 'should change count of Students' do 
+      expect { subject }.to change { Student.all.count }.by(1)
     end
   end
 end
