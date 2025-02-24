@@ -18,7 +18,7 @@ RSpec.describe StudentsController, type: :controller do
     it 'should return correct list of students' do 
       subject 
       json = JSON.parse(response.body)
-
+      
       Student.all.each_with_index do |s, i|
         expect(json["data"][i]).to eq(
           {
@@ -72,7 +72,7 @@ RSpec.describe StudentsController, type: :controller do
         expect { subject }.to change { AccessToken.all.count }.by(1)
       end
 
-      it 'should change count of Students' do 
+      it 'should change count of students' do 
         expect { subject }.to change { Student.all.count }.by(1)
       end
     end
@@ -97,6 +97,15 @@ RSpec.describe StudentsController, type: :controller do
   describe "DELETE #destroy" do 
     let(:student) { create :student }
     
+    context 'when unauthorized' do 
+      before { request.headers['X-Auth-Token'] = 'Invalid token' }
+
+      it 'should return status 401' do 
+        delete :destroy, params: { id: student.id }
+        expect(response).to have_http_status(401)
+      end
+    end
+    
     context 'when authorized' do 
       let(:access_token) { create :access_token, student: student }
       
@@ -114,15 +123,6 @@ RSpec.describe StudentsController, type: :controller do
         it 'should change count of studennts' do
           expect { delete :destroy, params: {id: student.id} }.to change { Student.all.count }.by(-1)
         end
-      end
-    end
-
-    context 'when unauthorized' do 
-      before { request.headers['X-Auth-Token'] = 'Invalid token' }
-
-      it 'should return status 401' do 
-        delete :destroy, params: { id: student.id }
-        expect(response).to have_http_status(401)
       end
     end
   end

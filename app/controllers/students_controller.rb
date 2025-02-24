@@ -10,6 +10,7 @@ class StudentsController < ApplicationController
 
   def create 
     student = Student.new(student_params)
+
     if student.valid?
       student.save
       json_student = student.as_json(except: [:created_at, :updated_at]) 
@@ -24,6 +25,7 @@ class StudentsController < ApplicationController
 
   def destroy 
     student = Student.find_by(id: params[:id])
+    
     if student.nil? 
       render json: {}, status: 400
     else 
@@ -36,6 +38,7 @@ class StudentsController < ApplicationController
   def authorize
     provided_token = request.headers['X-Auth-Token']&.gsub(/\ABearer\s/, '')
     @access_token = AccessToken.find_by(token: provided_token)
+    
     render json: {}, status: 401 if @access_token.nil? 
   end
 

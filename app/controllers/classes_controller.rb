@@ -1,5 +1,6 @@
 class ClassesController < ApplicationController
   before_action :find_school
+  
   def index 
     render json: @school.classes, status: :ok
   end

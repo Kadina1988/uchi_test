@@ -7,4 +7,7 @@ class SchoolClass < ApplicationRecord
 
   validates :number, :letter, presence: true  
 
+  def students_count
+    students.count 
+  end
 end
