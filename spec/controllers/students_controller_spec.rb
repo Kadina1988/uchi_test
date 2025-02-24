@@ -1,17 +1,16 @@
-require 'rails_helper'
+require 'rails_helper' 
 
-RSpec.describe "Students", type: :request do
+RSpec.describe StudentsController, type: :controller do 
   let(:school) { create :school }
   let(:class_1) { create :school_class, school: school }
   
-  describe "GET index" do
+  describe "GET #index" do
     let!(:student) { create :student, school: school, class_id: class_1.id }
     let!(:student_2) { create :student, school: school, class_id: class_1.id, first_name: 'Сергей' }
 
-    subject { get "/schools/#{school.id}/classes/#{class_1.id}/students"}
+    subject { get :index, params: { school_id: school.id, class_id: class_1.id } }
 
     it 'should return status ok' do 
-      # debugger
       subject 
       expect(response).to have_http_status(:ok)
     end
@@ -47,7 +46,7 @@ RSpec.describe "Students", type: :request do
         }
       end
 
-      subject { post '/students', params: correct_params }
+      subject { post :create, params: correct_params }
 
       it 'should return status 201' do
         subject 
@@ -69,6 +68,10 @@ RSpec.describe "Students", type: :request do
         )
       end
 
+      it 'should create access_token' do 
+        expect { subject }.to change { AccessToken.all.count }.by(1)
+      end
+
       it 'should change count of Students' do 
         expect { subject }.to change { Student.all.count }.by(1)
       end
@@ -83,10 +86,43 @@ RSpec.describe "Students", type: :request do
         }
       end
 
-      subject { post '/students', params: invalid_params }
+      subject { post :create, params: invalid_params }
       it 'should return status 405' do 
         subject
         expect(response).to have_http_status(405)
+      end
+    end
+  end
+
+  describe "DELETE #destroy" do 
+    let(:student) { create :student }
+    
+    context 'when authorized' do 
+      let(:access_token) { create :access_token, student: student }
+      
+      before { request.headers['X-Auth-Token'] = "Bearer #{access_token.token}" }
+      
+      context 'when incorrect id' do 
+        it 'should return code 400' do 
+          delete :destroy, params: { id: -44 }
+          expect(response).to have_http_status(400)      
+        end
+      end
+
+      context 'when operation was successful' do 
+        before { student }
+        it 'should change count of studennts' do
+          expect { delete :destroy, params: {id: student.id} }.to change { Student.all.count }.by(-1)
+        end
+      end
+    end
+
+    context 'when unauthorized' do 
+      before { request.headers['X-Auth-Token'] = 'Invalid token' }
+
+      it 'should return status 401' do 
+        delete :destroy, params: { id: student.id }
+        expect(response).to have_http_status(401)
       end
     end
   end

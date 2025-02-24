@@ -10,9 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_02_22_161835) do
+ActiveRecord::Schema[7.2].define(version: 2025_02_24_062453) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "access_tokens", force: :cascade do |t|
+    t.string "token"
+    t.bigint "student_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["student_id"], name: "index_access_tokens_on_student_id"
+  end
 
   create_table "classes", force: :cascade do |t|
     t.integer "number"
@@ -51,6 +59,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_22_161835) do
     t.index ["school_id"], name: "index_students_on_school_id"
   end
 
+  add_foreign_key "access_tokens", "students"
   add_foreign_key "classes", "schools"
   add_foreign_key "klasses", "schools"
   add_foreign_key "students", "classes"

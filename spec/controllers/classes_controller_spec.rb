@@ -1,11 +1,11 @@
-require 'rails_helper'
+require 'rails_helper' 
 
-RSpec.describe "Classes", type: :request do
+RSpec.describe ClassesController, type: :controller do 
   describe "GET /index" do
     let(:school) { create :school }
     let!(:class_a) { create :school_class, school: school }
 
-    subject { get "/schools/#{school.id}/classes"}
+    subject { get :index, params: { school_id: school.id } }
 
     it 'should return status ok' do 
       subject 

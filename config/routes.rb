@@ -5,5 +5,5 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :students, only: :create 
+  resources :students, only: %i[create destroy]
 end
