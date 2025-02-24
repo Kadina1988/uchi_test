@@ -14,10 +14,11 @@ class StudentsController < ApplicationController
     if student.valid?
       student.save
       json_student = student.as_json(except: [:created_at, :updated_at]) 
-      render json: json_student, status: 201
-
+      
       token = student.build_access_token
       token.save
+      
+      render json: json_student, status: 201
     else 
       render json: {}, status: 405
     end
