@@ -1,4 +1,6 @@
 class StudentsController < ApplicationController
+  rescue_from ActiveRecord::RecordNotFound, with: :not_found
+
   skip_before_action :verify_authenticity_token
 
   before_action :find_class, only: %i[index]
@@ -25,16 +27,15 @@ class StudentsController < ApplicationController
   end
 
   def destroy 
-    student = Student.find_by(id: params[:id])
-    
-    if student.nil? 
-      render json: {}, status: 400
-    else 
-      student.destroy 
-    end
+    student = Student.find(params[:id])
+    student.destroy 
   end
 
   private 
+
+  def not_found
+    render json: {}, status: 400
+  end
 
   def authorize
     provided_token = request.headers['X-Auth-Token']&.gsub(/\ABearer\s/, '')
