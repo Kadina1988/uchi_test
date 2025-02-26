@@ -46,7 +46,7 @@ class StudentsController < ApplicationController
 
   def student_params
     params.permit(:first_name, :last_name, :surname,
-       :school_id, :class_id)
+      :school_id, :class_id)
   end
 
   def find_class
@@ -54,3 +54,4 @@ class StudentsController < ApplicationController
     @school_class = school.classes.find(params[:class_id])
   end
 end
+
