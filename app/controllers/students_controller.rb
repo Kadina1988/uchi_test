@@ -15,11 +15,11 @@ class StudentsController < ApplicationController
 
     if student.valid?
       student.save
-      json_student = student.as_json(except: [:created_at, :updated_at]) 
       
       token = student.build_access_token
       token.save
       
+      json_student = student.as_json(except: [:created_at, :updated_at])
       render json: json_student, status: 201
     else 
       render json: {}, status: 405
@@ -45,7 +45,7 @@ class StudentsController < ApplicationController
   end
 
   def student_params
-    params.permit(:first_name, :last_name, :surname,
+    params.require(:student).permit(:first_name, :last_name, :surname,
       :school_id, :class_id)
   end
 
