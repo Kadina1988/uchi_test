@@ -1,7 +1,7 @@
 services:
   api:
     build: ./
-    command: /bin/sh -c 'bundle exec rails db:create && bundle exec rails db:migrate && bundle exec rails s -b 0.0.0.0'
+    command: /bin/sh -c 'bundle exec rails db:create && bundle exec rails db:migrate && bundle exec rails db:seed && bundle exec rails s -b 0.0.0.0'
     ports:
       - "3000:3000"
     volumes:
@@ -18,7 +18,4 @@ services:
       POSTGRES_PASSWORD: password   
     volumes:
       - /app/tmp/db:/var/lib/postresql/data
-
-volumes:
-  db:
-        
+       
