@@ -2,6 +2,8 @@ FROM ruby:3.1
 
 WORKDIR /app 
 
-COPY . .    
+COPY Gemfile Gemfile.lock ./
+
+COPY . /app
 
 RUN bundle install 
